@@ -57,8 +57,8 @@ exports.authUser = asyncHandler(async (req, res) => {
 			throw new Error("Invalid username or password");
 		}
 	} else {
-		res.status(404);
-		throw new Error("User Not Found");
+		res.status(400);
+		throw new Error("Invalid username or password");
 	}
 });
 
