@@ -4,6 +4,11 @@ const { findOne } = require("../model/userModel");
 const jwt = require("jsonwebtoken");
 const bycrypt = require("bcryptjs");
 
+const genPassHash = async (password) => {
+	const salt = await bycrypt.genSalt(10);
+	const passwordHash = await bycrypt.hash(password, salt);
+	return passwordHash;
+};
 const genToken = (id) => {
 	let token = jwt.sign({ id: id }, process.env.JWT_SECRET, {
 		expiresIn: "30d",
@@ -14,8 +19,8 @@ exports.registerUser = asyncHandler(async (req, res) => {
 	const { name, email, password } = req.body;
 	const userExists = await User.findOne({ email });
 	if (!userExists) {
-		const salt = await bycrypt.genSalt(10);
-		const passwordHash = await bycrypt.hash(password, salt);
+		// const salt = await bycrypt.genSalt(10);
+		const passwordHash = await genPassHash(password);
 		const user = await User.create({
 			name,
 			email,
@@ -70,6 +75,29 @@ exports.getUserProfile = asyncHandler(async (req, res) => {
 			name: user.name,
 			email: user.email,
 			isAdmin: user.isAdmin,
+		});
+	} else {
+		res.status(404);
+		throw new Error("User Not Found");
+	}
+});
+
+exports.updateUserProfile = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user._id);
+	if (user) {
+		user.name = req.body.name || user.name;
+		user.email = req.body.email || user.email;
+		if (req.body.password) {
+			user.password = await genPassHash(req.body.password);
+		}
+
+		const updatedUser = await user.save();
+		return res.json({
+			_id: updatedUser._id,
+			name: updatedUser.name,
+			email: updatedUser.email,
+			isAdmin: updatedUser.isAdmin,
+			token: genToken(updatedUser._id),
 		});
 	} else {
 		res.status(404);
