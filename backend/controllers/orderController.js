@@ -18,7 +18,7 @@ exports.addOrderItems = asyncHandler(async (req, res) => {
 		const order = new Order({
 			orderItems,
 			shippingAddress,
-			user: req.user_id,
+			user: req.user._id,
 			paymentMethod,
 			itemsPrice,
 			taxPrice,
