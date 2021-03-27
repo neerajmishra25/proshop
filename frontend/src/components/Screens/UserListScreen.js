@@ -4,7 +4,8 @@ import { Table, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../Message";
 import Loader from "../Loader";
-import { listUsers } from "../../actions/userActions";
+import { listUsers, deleteUser } from "../../actions/userActions";
+import swal from "sweetalert";
 
 const UserListScreen = ({ history }) => {
 	const dispatch = useDispatch();
@@ -14,16 +15,33 @@ const UserListScreen = ({ history }) => {
 
 	const userList = useSelector((state) => state.userList);
 	const { loading, users, error } = userList;
+
+	const userDelete = useSelector((state) => state.userDelete);
+	const { success: successDelete } = userDelete;
+
 	useEffect(() => {
+		if (successDelete) {
+			swal("User Deleted!", "", "success");
+		}
 		if (userInfo && userInfo.isAdmin) {
 			dispatch(listUsers());
 		} else {
 			history.push("/login");
 		}
-	}, [dispatch, history, userInfo]);
+	}, [dispatch, history, userInfo, successDelete]);
 
-	const deleteHandler = () => {
-		console.log("deleted");
+	const deleteHandler = async (id) => {
+		const willDelete = await swal({
+			title: "Are you sure?",
+			text: "Are you sure that you want to delete this user?",
+			icon: "warning",
+			dangerMode: true,
+			buttons: true,
+		});
+		if (willDelete) {
+			const check = await dispatch(deleteUser(id));
+			console.log(check);
+		}
 	};
 	return (
 		<>
