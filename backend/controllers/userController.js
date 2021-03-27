@@ -109,3 +109,14 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
 	const users = await User.find({});
 	res.json(users);
 });
+
+exports.deleteUser = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.params.id);
+	if (user) {
+		await user.remove();
+		res.json({ message: "User Deleted" });
+	} else {
+		res.status(404);
+		throw new Error("User does not exist");
+	}
+});
