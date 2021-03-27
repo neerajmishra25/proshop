@@ -75,14 +75,14 @@ const orderSchema = mongoose.Schema(
 		},
 		isDelivered: {
 			type: Boolean,
-			// required: false,
 			defalut: false,
+			required: true,
 		},
 		deliveredAt: {
 			type: Date,
 		},
 	},
-	{ timestapms: true }
+	{ timestamps: true }
 );
 
 const Order = mongoose.model("Order", orderSchema);

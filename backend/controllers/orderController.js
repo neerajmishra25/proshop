@@ -10,6 +10,7 @@ exports.addOrderItems = asyncHandler(async (req, res) => {
 		taxPrice,
 		shippingPrice,
 		totalPrice,
+		isDelivered,
 	} = req.body;
 	if (orderItems && orderItems.length === 0) {
 		res.status(400);
@@ -24,6 +25,7 @@ exports.addOrderItems = asyncHandler(async (req, res) => {
 			taxPrice,
 			shippingPrice,
 			totalPrice,
+			isDelivered,
 		});
 		const createdOrder = await order.save();
 		res.status(201).json(createdOrder);
