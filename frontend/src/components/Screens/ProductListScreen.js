@@ -38,7 +38,7 @@ const ProductListScreen = ({ history, match }) => {
 		// 	swal("Product Deleted", "", "success");
 		// }
 		if (successCreate) {
-			history.push(`/admin/product/${createdProduct._id}`);
+			history.push(`/admin/product/${createdProduct._id}/edit`);
 		} else {
 			if (userInfo && userInfo.isAdmin) {
 				dispatch(listProducts());
