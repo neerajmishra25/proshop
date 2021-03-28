@@ -4,7 +4,7 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../Message";
 import Loader from "../Loader";
-import { listProducts } from "../../actions/productActions";
+import { listProducts, deleteProduct } from "../../actions/productActions";
 import swal from "sweetalert";
 
 const ProductListScreen = ({ history, match }) => {
@@ -16,16 +16,32 @@ const ProductListScreen = ({ history, match }) => {
 	const productList = useSelector((state) => state.productList);
 	const { loading, products, error } = productList;
 
+	const productDelete = useSelector((state) => state.productDelete);
+	const { success: successDelete, error: errorDelete } = productDelete;
+
 	useEffect(() => {
-		// if (successDelete) {
-		// 	swal("User Deleted!", "", "success");
-		// }
-		if (userInfo && userInfo.isAdmin) {
-			dispatch(listProducts());
+		if (successDelete) {
+			swal("Product Deleted", "", "success");
+			if (userInfo && userInfo.isAdmin) {
+				dispatch(listProducts());
+			} else {
+				history.push("/login");
+			}
+		} else if (errorDelete) {
+			swal(errorDelete, "", "error");
+			if (userInfo && userInfo.isAdmin) {
+				dispatch(listProducts());
+			} else {
+				history.push("/login");
+			}
 		} else {
-			history.push("/login");
+			if (userInfo && userInfo.isAdmin) {
+				dispatch(listProducts());
+			} else {
+				history.push("/login");
+			}
 		}
-	}, [dispatch, history, userInfo]);
+	}, [dispatch, history, userInfo, successDelete, errorDelete]);
 
 	const deleteHandler = async (id) => {
 		const willDelete = await swal({
@@ -36,8 +52,7 @@ const ProductListScreen = ({ history, match }) => {
 			buttons: true,
 		});
 		if (willDelete) {
-			// const check = await dispatch(deleteUser(id));
-			// console.log(check);
+			await dispatch(deleteProduct(id));
 		}
 	};
 	const createProductHandler = (product) => {};
