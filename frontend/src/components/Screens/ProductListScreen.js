@@ -4,7 +4,12 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../Message";
 import Loader from "../Loader";
-import { listProducts, deleteProduct } from "../../actions/productActions";
+import {
+	listProducts,
+	deleteProduct,
+	createProduct,
+} from "../../actions/productActions";
+import { PRODUCT_CREATE_RESET } from "../../constants/productConstant";
 import swal from "sweetalert";
 
 const ProductListScreen = ({ history, match }) => {
@@ -19,21 +24,21 @@ const ProductListScreen = ({ history, match }) => {
 	const productDelete = useSelector((state) => state.productDelete);
 	const { success: successDelete, error: errorDelete } = productDelete;
 
+	const productCreate = useSelector((state) => state.productCreate);
+	const {
+		loading: loadingCreate,
+		success: successCreate,
+		error: errorCreate,
+		product: createdProduct,
+	} = productCreate;
+
 	useEffect(() => {
-		if (successDelete) {
-			swal("Product Deleted", "", "success");
-			if (userInfo && userInfo.isAdmin) {
-				dispatch(listProducts());
-			} else {
-				history.push("/login");
-			}
-		} else if (errorDelete) {
-			swal(errorDelete, "", "error");
-			if (userInfo && userInfo.isAdmin) {
-				dispatch(listProducts());
-			} else {
-				history.push("/login");
-			}
+		dispatch({ type: PRODUCT_CREATE_RESET });
+		// if (successDelete) {
+		// 	swal("Product Deleted", "", "success");
+		// }
+		if (successCreate) {
+			history.push(`/admin/product/${createdProduct._id}`);
 		} else {
 			if (userInfo && userInfo.isAdmin) {
 				dispatch(listProducts());
@@ -41,7 +46,15 @@ const ProductListScreen = ({ history, match }) => {
 				history.push("/login");
 			}
 		}
-	}, [dispatch, history, userInfo, successDelete, errorDelete]);
+	}, [
+		dispatch,
+		history,
+		userInfo,
+		successDelete,
+		errorDelete,
+		successCreate,
+		createdProduct,
+	]);
 
 	const deleteHandler = async (id) => {
 		const willDelete = await swal({
@@ -55,7 +68,9 @@ const ProductListScreen = ({ history, match }) => {
 			await dispatch(deleteProduct(id));
 		}
 	};
-	const createProductHandler = (product) => {};
+	const createProductHandler = (product) => {
+		dispatch(createProduct());
+	};
 	return (
 		<>
 			<Row className="align-items-center">
@@ -68,6 +83,9 @@ const ProductListScreen = ({ history, match }) => {
 					</Button>
 				</Col>
 			</Row>
+			{loadingCreate && <Loader />}
+			{errorCreate && <Message variant="danger">{errorCreate}</Message>}
+
 			{loading ? (
 				<Loader />
 			) : error ? (
@@ -76,24 +94,24 @@ const ProductListScreen = ({ history, match }) => {
 				<Table striped bordered hover responsive className="table-sm">
 					<thead>
 						<tr>
-							<th>ID</th>
+							{/* <th>ID</th> */}
 							<th>Product Name</th>
 							<th>Price</th>
 							<th>Category</th>
 							<th>Brand</th>
-							<th>Stock</th>
+							{/* <th>Stock</th> */}
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
 						{products.map((product) => (
 							<tr key={product._id}>
-								<td>{product._id}</td>
+								{/* <td>{product._id}</td> */}
 								<td>{product.name}</td>
 								<td>{product.price}</td>
 								<td>{product.brand}</td>
 								<td>{product.category}</td>
-								<td>{product.countInStock}</td>
+								{/* <td>{product.countInStock}</td> */}
 								{/* <td>
 									<a rel="noreferrer" target="_blank" href={`${product.image}`}>
 										{product.image}
