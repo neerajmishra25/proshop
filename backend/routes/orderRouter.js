@@ -8,5 +8,11 @@ router.get("/myorders", protect, orderController.getMyOrders);
 router.get("/", protect, admin, orderController.getOrders);
 router.get("/:id", protect, orderController.getOrderById);
 router.put("/:id/pay", protect, orderController.updateOrderToPaid);
+router.put(
+	"/:id/deliver",
+	protect,
+	admin,
+	orderController.updateOrderToDelivered
+);
 
 module.exports = router;
