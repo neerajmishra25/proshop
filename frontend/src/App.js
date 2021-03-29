@@ -17,6 +17,7 @@ import UserListScreen from "./components/Screens/UserListScreen";
 import UserEditScreen from "./components/Screens/UserEditScreen";
 import ProductListScreen from "./components/Screens/ProductListScreen";
 import ProductEditScreen from "./components/Screens/ProductEditScreen";
+import OrderListScreen from "./components/Screens/OrdersListScreen";
 
 const App = () => {
 	return (
@@ -25,6 +26,8 @@ const App = () => {
 			<main className="py-3">
 				<Container>
 					<Route path="/admin/productlist" component={ProductListScreen} />
+					<Route path="/admin/orderlist" component={OrderListScreen} />
+
 					<Route path="/admin/product/:id/edit" component={ProductEditScreen} />
 					<Route path="/admin/userlist" component={UserListScreen} />
 					<Route path="/admin/user/:id/edit" component={UserEditScreen} />
