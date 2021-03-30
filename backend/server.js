@@ -6,11 +6,17 @@ const userRouter = require("./routes/userRouter");
 const orderRouter = require("./routes/orderRouter");
 const uploadRouter = require("./routes/uploadRouter");
 const path = require("path");
+const morgan = require("morgan");
 
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 require("dotenv").config();
 
 const app = express();
+
+if (process.env.NODE_ENV === "development") {
+	app.use(morgan("dev"));
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 connectDB();
