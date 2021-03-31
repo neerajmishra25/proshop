@@ -4,6 +4,8 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../Message";
 import Loader from "../Loader";
+import Paginate from "../Paginate";
+
 import {
 	listProducts,
 	deleteProduct,
@@ -14,12 +16,13 @@ import swal from "sweetalert";
 
 const ProductListScreen = ({ history, match }) => {
 	const dispatch = useDispatch();
+	const pageNumber = match.params.pageNumber || 1;
 
 	const userLogin = useSelector((state) => state.userLogin);
 	const { userInfo } = userLogin;
 
 	const productList = useSelector((state) => state.productList);
-	const { loading, products, error } = productList;
+	const { loading, products, error, pages, page } = productList;
 
 	const productDelete = useSelector((state) => state.productDelete);
 	const { success: successDelete, error: errorDelete } = productDelete;
@@ -41,7 +44,7 @@ const ProductListScreen = ({ history, match }) => {
 			history.push(`/admin/product/${createdProduct._id}/edit`);
 		} else {
 			if (userInfo && userInfo.isAdmin) {
-				dispatch(listProducts());
+				dispatch(listProducts("", pageNumber));
 			} else {
 				history.push("/login");
 			}
@@ -54,6 +57,7 @@ const ProductListScreen = ({ history, match }) => {
 		errorDelete,
 		successCreate,
 		createdProduct,
+		pageNumber,
 	]);
 
 	const deleteHandler = async (id) => {
@@ -91,50 +95,53 @@ const ProductListScreen = ({ history, match }) => {
 			) : error ? (
 				<Message variant="danger">{error}</Message>
 			) : (
-				<Table striped bordered hover responsive className="table-sm">
-					<thead>
-						<tr>
-							{/* <th>ID</th> */}
-							<th>Product Name</th>
-							<th>Price</th>
-							<th>Category</th>
-							<th>Brand</th>
-							{/* <th>Stock</th> */}
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						{products.map((product) => (
-							<tr key={product._id}>
-								{/* <td>{product._id}</td> */}
-								<td>{product.name}</td>
-								<td>{product.price}</td>
-								<td>{product.brand}</td>
-								<td>{product.category}</td>
-								{/* <td>{product.countInStock}</td> */}
-								{/* <td>
+				<>
+					<Table striped bordered hover responsive className="table-sm">
+						<thead>
+							<tr>
+								{/* <th>ID</th> */}
+								<th>Product Name</th>
+								<th>Price</th>
+								<th>Category</th>
+								<th>Brand</th>
+								{/* <th>Stock</th> */}
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{products.map((product) => (
+								<tr key={product._id}>
+									{/* <td>{product._id}</td> */}
+									<td>{product.name}</td>
+									<td>{product.price}</td>
+									<td>{product.brand}</td>
+									<td>{product.category}</td>
+									{/* <td>{product.countInStock}</td> */}
+									{/* <td>
 									<a rel="noreferrer" target="_blank" href={`${product.image}`}>
 										{product.image}
 									</a>
 								</td> */}
-								<td>
-									<LinkContainer to={`/admin/product/${product._id}/edit`}>
-										<Button variant="light" className="btn-sm">
-											<i className="fas fa-edit"></i> Edit
+									<td>
+										<LinkContainer to={`/admin/product/${product._id}/edit`}>
+											<Button variant="light" className="btn-sm">
+												<i className="fas fa-edit"></i> Edit
+											</Button>
+										</LinkContainer>
+										<Button
+											variant="danger"
+											className="btn-sm"
+											onClick={() => deleteHandler(product._id)}
+										>
+											<i className="fas fa-trash"></i> Delete
 										</Button>
-									</LinkContainer>
-									<Button
-										variant="danger"
-										className="btn-sm"
-										onClick={() => deleteHandler(product._id)}
-									>
-										<i className="fas fa-trash"></i> Delete
-									</Button>
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</Table>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</Table>
+					<Paginate pages={pages} page={page} isAdmin={true} />
+				</>
 			)}
 		</>
 	);
