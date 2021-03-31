@@ -19,6 +19,7 @@ import {
 	Form,
 } from "react-bootstrap";
 import Rating from "../Rating";
+import Meta from "../Meta";
 
 const ProductScreen = ({ history, match }) => {
 	const dispatch = useDispatch();
@@ -73,6 +74,7 @@ const ProductScreen = ({ history, match }) => {
 				<Message variant="danger">{error}</Message>
 			) : (
 				<>
+					<Meta title={product.name} />
 					<Row>
 						<Col md={6}>
 							<Image src={product.image} alt={product.name} fluid />
