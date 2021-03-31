@@ -5,6 +5,7 @@ import Product from "../Product";
 import Message from "../Message";
 import Loader from "../Loader";
 import Paginate from "../Paginate";
+import ProductCarousel from "../ProductCarosel";
 
 // import Product from "../Product";
 import { listProducts } from "../../actions/productActions";
@@ -21,6 +22,7 @@ const HomeScreen = ({ match }) => {
 	// const products = [];
 	return (
 		<>
+			{!keyword && <ProductCarousel />}
 			<h1>Latest Products</h1>
 			{loading ? (
 				<Loader />
